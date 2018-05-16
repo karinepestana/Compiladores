@@ -1,0 +1,125 @@
+PARSER_BEGIN(Lugosi)
+import java.io.*;
+public class Lugosi {
+
+  public static void main(String args[]) throws ParseException,IOException {
+    
+    Lugosi parser = new Lugosi(new FileInputStream(args[0]));
+    parser.Lugosi();
+  }
+
+}
+
+PARSER_END(Lugosi)
+
+SKIP : {
+  " "
+| "\t"
+| "\n"
+| "\r"
+}
+
+TOKEN : {
+  <MAIN: "main">
+| <ACHAVES: "{">
+| <FCHAVES: "}">
+| <PV: ";">
+| <VIR: ",">
+| <APAR: "(">
+| <FPAR: ")">
+| <TIPO: ("int" | "bool")>
+| <DO: "do">
+| <IF: "if">
+| <ELSE: "else">
+| <WHILE: "while">
+| <RETURN: "return">
+| <PRINT: "print">
+| <ATRIB: ":=">
+| <BOOLEAN: ("true" | "false")>
+| <VAR: "var">
+| <FUNC: "function">
+}
+
+TOKEN : {
+  <OP: ("+" | "-" | "*" | "/" | "&&" | "||" | "<" | ">" | "==")>
+| <ID: ["a"-"z","A"-"Z"] ( ["a"-"z","A"-"Z","0"-"9"])*>
+| <NUM: ["0"-"9"](["0"-"9"])*>
+
+}
+
+void Lugosi () :
+{}
+{ 
+
+	Main() 
+	(Func())?
+ 	<EOF> 
+}
+	
+
+void Main ():
+{}
+{
+	<MAIN> <ACHAVES> 
+ 
+	VarDecl()
+	SeqComandos()
+
+	<FCHAVES>
+
+}
+
+void VarDecl ():
+{}
+{
+	(<VAR> <TIPO> <ID> <PV>)*
+}
+
+void SeqComandos ():
+{}
+{
+	(Comando())*
+}
+
+void Comando ():
+{}
+{
+	<ID> ((<ATRIB> Exp())|(<APAR> (ListaExp())? <FPAR>)) <PV>
+|	<IF> <APAR> Exp() <FPAR> <ACHAVES> SeqComandos() <FCHAVES> <PV>
+|	<WHILE> <APAR> Exp() <FPAR> <DO> <ACHAVES> SeqComandos() <FCHAVES> <PV>
+|	<DO> <ACHAVES> SeqComandos() <FCHAVES> <WHILE> <APAR> Exp() <FPAR> <PV>
+|	<RETURN> Exp() <PV>
+|	<PRINT> <APAR> Exp() <FPAR> <PV>
+}
+
+void Exp ():
+{}
+{
+	<APAR> Exp() <OP> Exp() <FPAR> | Fator()
+}
+
+void ListaExp ():
+{}
+{
+	Exp()(<VIR> Exp())*
+}
+
+void Fator ():
+{}
+{
+	<ID> (<APAR> (ListaExp())? <FPAR>)?
+|	<NUM>
+|	<BOOLEAN>
+}
+
+void Func ():
+{}
+{
+	(<FUNC> <TIPO> <ID> <APAR> (ListaArg())? <FPAR> <ACHAVES> VarDecl() SeqComandos() <FCHAVES>)+
+}
+
+void ListaArg ():
+{}
+{
+	<TIPO> <ID> (<VIR> <TIPO> <ID>)*
+}
