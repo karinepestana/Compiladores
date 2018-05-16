@@ -1,0 +1,11 @@
+main{
+	var int x;
+	var int y;
+
+	if((x==y)){
+		do{
+			x := (x - 1);
+		}while((x > 0));
+		return y;
+	};
+}
