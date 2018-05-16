@@ -1,11 +1,11 @@
 
-f = open('entrada')
+f = open('entrada.txt')
 pilha = []
 
 for line in f:
     aux = line.split()
 
-    print(aux)
+    #print(aux)
 
     if(aux[0] == 'PUSH'):
     	pilha.append(int(aux[1]))
